@@ -1,0 +1,1 @@
+This repository contains the code of CSE470's MERN based project named CampusBazar.
