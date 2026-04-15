@@ -1,1 +1,4 @@
-This repository contains the code of CSE470's MERN based project named CampusBazar.
+### This repository contains the frontend code of CSE470's MERN based project named CampusBazar.
+
+# Backend Repository 
+### [text](https://github.com/md-imteaj-rana/CSE-470_Project-backend.git)
