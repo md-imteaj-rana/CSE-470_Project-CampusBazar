@@ -5,6 +5,7 @@ import Hero from '../components/Hero'
 const Home = () => {
   return (
     <div>
+        <title>Home</title>
       <Hero></Hero>
 
       <Newsletter></Newsletter>
