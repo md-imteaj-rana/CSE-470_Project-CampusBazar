@@ -4,6 +4,7 @@ import { Home, Search, ArrowLeft } from 'lucide-react';
 const Error = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
+        <title>404 Error!!</title>
       <div className="max-w-2xl mx-auto text-center">
         
         {/* Animated 404 */}
