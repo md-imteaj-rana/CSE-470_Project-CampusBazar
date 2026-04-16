@@ -24,10 +24,11 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal gap-2 text-base font-medium text-gray-700">
-              <li><a href="#" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
-              <li><a href="#" className="hover:text-indigo-600 transition-colors">Add listing</a></li>
-              <li><a href="#" className="hover:text-indigo-600 transition-colors">My Profile</a></li>
-              <li><a href="#" className="hover:text-indigo-600 transition-colors">My Orders</a></li>
+              <li><a href="Maretplace" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
+              <li><a href="AddListing" className="hover:text-indigo-600 transition-colors">Add listing</a></li>
+              <li><a href="MyProfile" className="hover:text-indigo-600 transition-colors">My Profile</a></li>
+              <li><a href="MyCart" className="hover:text-indigo-600 transition-colors">My Cart</a></li>
+              <li><a href="MyOrders" className="hover:text-indigo-600 transition-colors">My Orders</a></li>
             </ul>
           </div>
 
@@ -81,10 +82,11 @@ const Navbar = () => {
         {isOpen && (
           <div className="lg:hidden bg-white border-t py-4 px-4 shadow-lg">
             <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
-              <li><a href="#" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
-              <li><a href="#" className="block py-2 hover:text-indigo-600">Add Listing</a></li>
-              <li><a href="#" className="block py-2 hover:text-indigo-600">My Profile</a></li>
-              <li><a href="#" className="block py-2 hover:text-indigo-600">My Orders</a></li>
+              <li><a href="Maretplace" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
+              <li><a href="AddListing" className="block py-2 hover:text-indigo-600">Add Listing</a></li>
+              <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>
+              <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>
+              <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>
               <li className="pt-4 border-t">
                 <a href="#" className="block py-2 text-indigo-600 font-semibold">Login</a>
               </li>
