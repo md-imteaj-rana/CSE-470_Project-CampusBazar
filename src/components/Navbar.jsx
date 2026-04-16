@@ -56,7 +56,7 @@ const Navbar = () => {
             </div>
 
             {/* Login / Profile */}
-            <a href="#" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
+            <a href="Login" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
               Login
             </a>
 
