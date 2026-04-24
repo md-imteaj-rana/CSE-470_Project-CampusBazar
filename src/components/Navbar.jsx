@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../Provider/AuthProvider';
+import { signOut } from 'firebase/auth';
+import auth from '../firebase/firebase.config';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const {user} = useContext(AuthContext)
+
+  const handleSignout = () => {
+    signOut(auth)
+  }
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -56,9 +65,17 @@ const Navbar = () => {
             </div>
 
             {/* Login / Profile */}
-            <a href="Login" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
+            {
+              user && <button onClick={handleSignout} className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
+              Logout
+            </button>
+            }
+            {
+              !user && <a href="Login" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
               Login
             </a>
+            }
+            
 
             {/* Mobile Menu Button */}
             <button 
@@ -87,9 +104,19 @@ const Navbar = () => {
               <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>
               <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>
               <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>
-              <li className="pt-4 border-t">
-                <a href="#" className="block py-2 text-indigo-600 font-semibold">Login</a>
+              
+              {
+                user && <li className="pt-4 border-t">
+                <button onClick={handleSignout} className="block py-2 text-indigo-600 font-semibold">Logout</button>
               </li>
+              }
+              {
+                !user && <li className="pt-4 border-t">
+                <a href="Login" className="block py-2 text-indigo-600 font-semibold">Login</a>
+              </li>
+              }
+              
+
             </ul>
           </div>
         )}

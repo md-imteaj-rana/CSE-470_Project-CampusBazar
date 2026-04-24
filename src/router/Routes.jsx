@@ -9,6 +9,8 @@ import MyCart from "../pages/MyCart";
 import Marketplace from "../pages/Marketplace";
 import ViewDetails from "../pages/ViewDetails";
 import Login from "../pages/Login";
+import Regisger from "../pages/Register";
+
 
 const router = createBrowserRouter([
   {
@@ -47,6 +49,10 @@ const router = createBrowserRouter([
         {
           path: "Login",
           element: <Login></Login>
+        },
+        {
+          path: "Register",
+          element: <Regisger></Regisger>
         }
         
     ]
