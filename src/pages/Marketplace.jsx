@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../styles/Marketplace.css'
 
 const Marketplace = () => {
+  const navigate = useNavigate()
+
   // Sample product data with placeholder images
   const allProducts = [
     { id: 1, name: 'Cotton T-Shirt', price: 71880, color: 'Blue', brand: 'Nike', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop', category: 't-shirt' },
@@ -126,7 +129,12 @@ const Marketplace = () => {
                 <p className='product-color'>Color: <span>{product.color}</span></p>
                 <div className='product-footer'>
                   <p className='product-price'>Tk {product.price.toLocaleString('en-IN')}</p>
-                  <button className='add-to-cart-btn'>Add to Cart</button>
+                  <button
+                    className='add-to-cart-btn'
+                    onClick={() => navigate('/ViewDetails', { state: { product } })}
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>
