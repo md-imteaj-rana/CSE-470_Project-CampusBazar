@@ -3,6 +3,7 @@ import '../styles/Marketplace.css'
 
 const Marketplace = () => {
   // Sample product data with placeholder images
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const allProducts = [
     { id: 1, name: 'Cotton T-Shirt', price: 71880, color: 'Blue', brand: 'Nike', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop', category: 't-shirt' },
     { id: 2, name: 'Casual Dress', price: 155880, color: 'Red', brand: 'Zara', image: 'https://images.unsplash.com/photo-1595777707802-41d339d60280?w=300&h=300&fit=crop', category: 'dress' },
