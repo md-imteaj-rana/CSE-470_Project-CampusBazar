@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 import '../styles/Marketplace.css'
 
 const Marketplace = () => {
+  const navigate = useNavigate()
+
   // Sample product data with placeholder images
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const allProducts = [
@@ -127,7 +130,12 @@ const Marketplace = () => {
                 <p className='product-color'>Color: <span>{product.color}</span></p>
                 <div className='product-footer'>
                   <p className='product-price'>Tk {product.price.toLocaleString('en-IN')}</p>
-                  <button className='add-to-cart-btn'>Add to Cart</button>
+                  <button
+                    className='add-to-cart-btn'
+                    onClick={() => navigate('/ViewDetails', { state: { product } })}
+                  >
+                    View details
+                  </button>
                 </div>
               </div>
             </div>
