@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { AuthContext } from '../Provider/AuthProvider'
 import { updateProfile } from 'firebase/auth';
 import auth from '../firebase/firebase.config';
@@ -7,6 +7,9 @@ import auth from '../firebase/firebase.config';
 const Regisger = () => {
 
   const {registerWithEmailPassword, setUser, user} = useContext(AuthContext);
+
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -38,68 +41,132 @@ const Regisger = () => {
 
     registerWithEmailPassword(email, pass)
     .then((userCredential) => {
-    // Signed up 
-    //const user = userCredential.user;
-    updateProfile(auth.currentUser, {
-    displayName: name, photoURL: imageurl
-    }).then(() => {
-      //console.log(userCredential.user)
-      setUser(userCredential.user)
-      // Profile updated!
-      // ...
-    }).catch((error) => {
-      console.log(error)
-      // An error occurred
-      // ...
-    });
-
+      updateProfile(auth.currentUser, {
+        displayName: name, photoURL: imageurl
+      }).then(() => {
+        setUser(userCredential.user)
+        navigate(location.state ? location.state : '/')
+      }).catch((error) => {
+        console.log(error)
+      });
     })
     .catch(err => {
       console.log(err);
     })
-
-
   }
 
   return (
     <div>
       <title>Sign up to CampusBazar</title>
-      <div className="min-h-screen bg-linear-to-r from-purple-200 via-pink-200 to-yellow-100 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-3xl p-8 md:p-12 transition-transform transform hover:scale-105 duration-500">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-6">
-          Welcome to CampusBazar!
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="label text-gray-700 font-semibold">Name</label>
-            <input name='name' type="text" placeholder="Enter your name" required
-              className="input input-bordered w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"/>
-          </div>
-          <div>
-            <label className="label text-gray-700 font-semibold">Image URL</label>
-            <input name='imageurl' type="text" placeholder="Image URL"
-              className="input input-bordered w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"/>
-          </div>
-          <div>
-            <label className="label text-gray-700 font-semibold">Email</label>
-            <input name='email' type="email" placeholder="Email" required
-              className="input input-bordered w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"/>
-          </div>
-          <div>
-            <label className="label text-gray-700 font-semibold">Password</label>
-            <input name='password' type="password" placeholder="Password" required
-              className="input input-bordered w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"/>
-          </div>
-          <div className="text-right">
-            <Link to={'/Login'} className="text-blue-600 hover:underline text-sm md:text-base">Already have an account? Login now.</Link>
-          </div>
-          <button className="btn w-full bg-pink-500 hover:bg-pink-600 text-white rounded-xl mt-4 shadow-lg transition-transform transform hover:scale-105">
-            Sign Up
-          </button>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+        
+        <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white rounded-3xl shadow-xl overflow-hidden">
           
-        </form>
+          {/* Left Panel */}
+          <div className="hidden md:flex flex-col items-center justify-center bg-linear-to-br from-indigo-600 to-purple-600 p-12 text-white text-center">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <span className="text-indigo-600 text-3xl font-bold">C</span>
+            </div>
+            <h2 className="text-3xl font-bold mb-3">
+              Campus<span className="text-yellow-300">Bazar</span>
+            </h2>
+            <p className="text-indigo-100 text-sm leading-relaxed mb-8">
+              Your trusted campus marketplace. Buy, sell and connect with fellow students.
+            </p>
+            <div className="space-y-4 w-full text-left">
+              {[
+                { icon: "📚", text: "Trade textbooks & notes" },
+                { icon: "💻", text: "Buy & sell electronics" },
+                { icon: "🤝", text: "Connect with campus mates" },
+                { icon: "🔒", text: "Safe & verified students only" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 text-sm">
+                  <span className="text-xl">{item.icon}</span>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Panel - Form */}
+          <div className="p-8 md:p-10">
+            {/* Mobile Logo */}
+            <div className="flex md:hidden items-center gap-2 mb-6">
+              <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+                <span className="text-white text-lg font-bold">C</span>
+              </div>
+              <span className="text-xl font-bold text-gray-800">Campus<span className="text-indigo-600">Bazar</span></span>
+            </div>
+
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">Create Account</h1>
+            <p className="text-gray-500 text-sm mb-7">Join CampusBazar newtwork to buy and sell your used goods with your fellows.</p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                <input
+                  name='name'
+                  type="text"
+                  placeholder="Enter your full name"
+                  required
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-0 text-gray-800 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Profile Image URL</label>
+                <input
+                  name='imageurl'
+                  type="text"
+                  placeholder="https://your-image-link.com"
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-0 text-gray-800 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                <input
+                  name='email'
+                  type="email"
+                  placeholder="example@gmail.com"
+                  required
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-0 text-gray-800 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <input
+                  name='password'
+                  type="password"
+                  placeholder="Min 6 chars, upper, lower, number, special"
+                  required
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-0 text-gray-800 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div className="text-right">
+                <Link to={'/Login'} className="text-indigo-600 hover:underline text-sm font-medium">
+                  Already have an account? Login
+                </Link>
+              </div>
+
+              <button className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold mt-2">
+                Create Account
+              </button>
+
+            </form>
+
+            <p className="text-xs text-center text-gray-400 mt-6">
+              By signing up, you agree to our{' '}
+              <a href="#" className="text-indigo-500 hover:underline">Terms</a> &{' '}
+              <a href="#" className="text-indigo-500 hover:underline">Privacy Policy</a>
+            </p>
+          </div>
+
+        </div>
       </div>
-    </div>
     </div>
   )
 }
