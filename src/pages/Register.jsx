@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import { AuthContext } from '../Provider/AuthProvider'
 import { updateProfile } from 'firebase/auth';
 import auth from '../firebase/firebase.config';
+import axios from 'axios';
 
 const Regisger = () => {
 
@@ -11,12 +12,13 @@ const Regisger = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
     const email = e.target.email.value;
     const pass = e.target.password.value;
     const name = e.target.name.value;
-    const imageurl = e.target.imageurl.value;
+    const imageurl = e.target.imageurl;
+    const file = imageurl.files[0]
 
     const uppercase = /[A-Z]/;
     const lowercase = /[a-z]/;
@@ -39,20 +41,39 @@ const Regisger = () => {
       return alert("You must include at least one special character.");
     }
 
-    registerWithEmailPassword(email, pass)
-    .then((userCredential) => {
-      updateProfile(auth.currentUser, {
-        displayName: name, photoURL: imageurl
-      }).then(() => {
-        setUser(userCredential.user)
-        navigate(location.state ? location.state : '/')
-      }).catch((error) => {
-        console.log(error)
-      });
-    })
-    .catch(err => {
-      console.log(err);
-    })
+
+    // imgbb api work
+    const res = await axios.post(`https://api.imgbb.com/1/upload?&key=77a36fc81fc847f9b0040be511b7f0f0`,{image:file},
+      {
+        headers:{
+          'Content-Type':'multipart/form-data'
+        }
+      }
+    )
+
+    const mainImageUrl = res.data.data.display_url
+
+    if (res.data.success == true){
+      // firebase authentication with email
+
+      registerWithEmailPassword(email, pass)
+      .then((userCredential) => {
+        updateProfile(auth.currentUser, {
+          displayName: name, photoURL: mainImageUrl
+        }).then(() => {
+          setUser(userCredential.user)
+          navigate(location.state ? location.state : '/')
+        }).catch((error) => {
+          console.log(error)
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        })
+    }
+
+
+    
   }
 
   return (
@@ -115,11 +136,10 @@ const Regisger = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Profile Image URL</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Profile Image</label>
                 <input
                   name='imageurl'
-                  type="text"
-                  placeholder="https://your-image-link.com"
+                  type="file"
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-0 text-gray-800 placeholder:text-gray-400"
                 />
               </div>
