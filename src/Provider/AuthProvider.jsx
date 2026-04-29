@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import React, { createContext, useEffect, useState } from 'react'
 import auth from '../firebase/firebase.config';
+import axios from 'axios';
 
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -10,10 +11,12 @@ const AuthProvider = ({children}) => {
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState('');
   
   const registerWithEmailPassword = (email,pass) => {
     return createUserWithEmailAndPassword(auth,email,pass)
   }
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -27,10 +30,20 @@ const AuthProvider = ({children}) => {
     
   },[])
 
+  // getting role of the user
+  useEffect(() => {
+    if(!user) return;
+    axios.get(`http://localhost:3000/users/role/${user.email}`)
+    .then(res => {
+      setRole(res.data.role)
+    })
+  },[user])
+
   const authData = {
     registerWithEmailPassword,
     user,
-    setUser
+    setUser,
+    loading
   }
 
   return <AuthContext value={authData}>
