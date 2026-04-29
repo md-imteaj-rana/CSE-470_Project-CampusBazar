@@ -53,6 +53,15 @@ const Regisger = () => {
 
     const mainImageUrl = res.data.data.display_url
 
+    // creating an object to post data to database
+    const formData = {
+      email,
+      pass,
+      name,
+      mainImageUrl,
+      
+    }
+
     if (res.data.success == true){
       // firebase authentication with email
 
@@ -62,6 +71,16 @@ const Regisger = () => {
           displayName: name, photoURL: mainImageUrl
         }).then(() => {
           setUser(userCredential.user)
+
+          // sending user info to database
+          axios.post('http://localhost:3000/users',formData)
+          .then(res => {
+            console.log(res.data)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          
           navigate(location.state ? location.state : '/')
         }).catch((error) => {
           console.log(error)
