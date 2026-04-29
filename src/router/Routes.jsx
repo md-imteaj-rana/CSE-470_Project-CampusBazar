@@ -10,6 +10,7 @@ import Marketplace from "../pages/Marketplace";
 import ViewDetails from "../pages/ViewDetails";
 import Login from "../pages/Login";
 import Regisger from "../pages/Register";
+import PrivateRoutes from "./PrivateRoutes";
 
 
 const router = createBrowserRouter([
@@ -24,19 +25,19 @@ const router = createBrowserRouter([
         },
         {
           path: "AddListing",
-          element: <AddListing></AddListing>
+          element: <PrivateRoutes><AddListing></AddListing></PrivateRoutes>
         },
         {
           path: "MyOrders",
-          element: <MyOrders></MyOrders>
+          element: <PrivateRoutes><MyOrders></MyOrders></PrivateRoutes>
         },
         {
           path: "MyProfile",
-          element: <MyProfile></MyProfile>
+          element: <PrivateRoutes><MyProfile></MyProfile></PrivateRoutes>
         },
         {
           path: "MyCart",
-          element: <MyCart></MyCart>
+          element: <PrivateRoutes><MyCart></MyCart></PrivateRoutes>
         },
         {
           path: "Maretplace",
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
         },
         {
           path: "ViewDetails",
-          element: <ViewDetails></ViewDetails>
+          element: <PrivateRoutes><ViewDetails></ViewDetails></PrivateRoutes>
         },
         {
           path: "Login",
