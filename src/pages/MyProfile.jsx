@@ -2,6 +2,7 @@ import { updateProfile } from 'firebase/auth'
 import React, { useContext, useState } from 'react'
 import auth from '../firebase/firebase.config'
 import { AuthContext } from '../Provider/AuthProvider'
+import MyListing from '../components/MyListing'
 
 const Profile = () => {
 
@@ -144,6 +145,9 @@ const Profile = () => {
         )}
 
       </div>
+
+
+      <MyListing></MyListing>
     </div>
   )
 }
