@@ -10,6 +10,7 @@ import Marketplace from "../pages/Marketplace";
 import ViewDetails from "../pages/ViewDetails";
 import Login from "../pages/Login";
 import Regisger from "../pages/Register";
+import AllUsers from "../pages/AllUsers";
 import PrivateRoutes from "./PrivateRoutes";
 
 
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
         {
           path: "ViewDetails",
           element: <PrivateRoutes><ViewDetails></ViewDetails></PrivateRoutes>
+        },
+        {
+          path: "AllUsers",
+          element: <PrivateRoutes><AllUsers></AllUsers></PrivateRoutes>
         },
         {
           path: "Login",

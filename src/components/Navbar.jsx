@@ -1,15 +1,35 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../Provider/AuthProvider';
 import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router';
 import auth from '../firebase/firebase.config';
+import UseAxios from '../hooks/UseAxios';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const axiosInstance = UseAxios();
+  const navigate = useNavigate();
 
   const {user} = useContext(AuthContext)
 
+  // Fetch role when user logs in
+  useEffect(() => {
+    if (user?.email) {
+      axiosInstance.get(`/users/role/${user.email}`)
+        .then(res => setUserRole(res.data?.role))
+        .catch(() => setUserRole(null));
+    } else {
+      setUserRole(null);
+    }
+  }, [user]);
+
+  const isAdmin = userRole === 'admin';
+
   const handleSignout = () => {
-    signOut(auth)
+    signOut(auth).then(() => {
+      navigate('/');
+    })
   }
 
   return (
@@ -34,10 +54,11 @@ const Navbar = () => {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal gap-2 text-base font-medium text-gray-700">
               <li><a href="Maretplace" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
-              <li><a href="AddListing" className="hover:text-indigo-600 transition-colors">Add listing</a></li>
-              <li><a href="MyProfile" className="hover:text-indigo-600 transition-colors">My Profile</a></li>
-              <li><a href="MyCart" className="hover:text-indigo-600 transition-colors">My Cart</a></li>
-              <li><a href="MyOrders" className="hover:text-indigo-600 transition-colors">My Orders</a></li>
+              {user && <li><a href="AddListing" className="hover:text-indigo-600 transition-colors">Add listing</a></li>}
+              {user && <li><a href="MyProfile" className="hover:text-indigo-600 transition-colors">My Profile</a></li>}
+              {user && <li><a href="MyCart" className="hover:text-indigo-600 transition-colors">My Cart</a></li>}
+              {user && <li><a href="MyOrders" className="hover:text-indigo-600 transition-colors">My Orders</a></li>}
+              {user && isAdmin && <li><a href="AllUsers" className="hover:text-indigo-600 transition-colors">All Users</a></li>}
             </ul>
           </div>
 
@@ -100,10 +121,11 @@ const Navbar = () => {
           <div className="lg:hidden bg-white border-t py-4 px-4 shadow-lg">
             <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
               <li><a href="Maretplace" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
-              <li><a href="AddListing" className="block py-2 hover:text-indigo-600">Add Listing</a></li>
-              <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>
-              <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>
-              <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>
+              {user && <li><a href="AddListing" className="block py-2 hover:text-indigo-600">Add Listing</a></li>}
+              {user && <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>}
+              {user && <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>}
+              {user && <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>}
+              {user && isAdmin && <li><a href="AllUsers" className="block py-2 hover:text-indigo-600">All Users</a></li>}
               
               {
                 user && <li className="pt-4 border-t">

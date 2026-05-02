@@ -3,28 +3,74 @@ import React, { useContext, useState } from 'react'
 import auth from '../firebase/firebase.config'
 import { AuthContext } from '../Provider/AuthProvider'
 import MyListing from '../components/MyListing'
+import axios from 'axios'
+import UseAxios from '../hooks/UseAxios'
 
 const Profile = () => {
 
   const {setUser, user} = useContext(AuthContext)
   const [isOpen, setIsOpen] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const axiosInstance = UseAxios()
 
   const handleUpdateform = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file))
+    }
+  }
+
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
     const name = e.target.name.value;
-    const imageurl = e.target.imageurl.value;
+    const fileInput = e.target.imageurl;
+    const file = fileInput.files[0];
 
+    setUploading(true)
+
+    let imageUrl = user?.photoURL;
+
+    // If a new file was selected, upload to imgbb
+    if (file) {
+      try {
+        const res = await axios.post(
+          `https://api.imgbb.com/1/upload?&key=77a36fc81fc847f9b0040be511b7f0f0`,
+          { image: file },
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+        imageUrl = res.data.data.display_url;
+      } catch (err) {
+        console.log(err)
+        alert('Image upload failed. Please try again.')
+        setUploading(false)
+        return
+      }
+    }
+
+    // Update Firebase profile
     updateProfile(auth.currentUser, {
-      displayName: name, 
-      photoURL: imageurl
+      displayName: name,
+      photoURL: imageUrl
     }).then(() => {
-      setUser({...user, photoURL: imageurl, displayName: name})
+      setUser({ ...user, photoURL: imageUrl, displayName: name })
+
+      // Also update in the backend database
+      axiosInstance.patch(`/users/profile/${user.email}`, {
+        name,
+        mainImageUrl: imageUrl
+      }).catch(err => console.log(err))
+
+      setUploading(false)
+      setPreviewUrl(null)
+      setIsOpen(false)
     }).catch((error) => {
       console.log(error)
+      setUploading(false)
     });
   }
 
@@ -121,14 +167,25 @@ const Profile = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Profile Photo URL
+                  Profile Photo
                 </label>
+                {/* Preview */}
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-100">
+                    <img
+                      src={previewUrl || user?.photoURL}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400">Select a new image to change your photo</p>
+                </div>
                 <input
-                  defaultValue={user?.photoURL}
                   name='imageurl'
-                  type="text"
-                  placeholder="https://your-image-link.com/photo.jpg"
-                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="file-input file-input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
                 />
               </div>
 
@@ -136,9 +193,10 @@ const Profile = () => {
 
               <button
                 type="submit"
-                className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold"
+                disabled={uploading}
+                className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold disabled:opacity-50"
               >
-                💾 Save Changes
+                {uploading ? '⏳ Uploading...' : '💾 Save Changes'}
               </button>
             </form>
           </div>
