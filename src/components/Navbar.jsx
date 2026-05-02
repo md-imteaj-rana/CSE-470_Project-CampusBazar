@@ -22,7 +22,7 @@ const Navbar = () => {
     } else {
       setUserRole(null);
     }
-  }, [user]);
+  }, [axiosInstance, user]);
 
   const isAdmin = userRole === 'admin';
 
