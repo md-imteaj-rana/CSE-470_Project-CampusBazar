@@ -70,7 +70,7 @@ const ViewDetails = () => {
               <p className='price-value'>Tk {product.price.toLocaleString('en-IN')}</p>
             </div>
             <button className='order-btn' onClick={() => setIsModalOpen(true)}>
-              Order Now
+              Add to Cart
             </button>
             <button className='back-btn' onClick={() => navigate(-1)}>
               Back to Marketplace
