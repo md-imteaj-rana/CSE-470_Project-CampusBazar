@@ -1,6 +1,56 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const AddListing = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'Clothes & Fashion',
+    price: '',
+    location: '',
+    description: '',
+    image: '',
+    date: '',
+    email: '' // This should be populated from auth
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:3000/listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert('Listing added successfully!');
+        // Reset form or redirect
+        setFormData({
+          name: '',
+          category: 'Clothes & Fashion',
+          price: '',
+          location: '',
+          description: '',
+          image: '',
+          date: '',
+          email: ''
+        });
+      } else {
+        alert('Failed to add listing');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error adding listing');
+    }
+  };
   return (
     <div>
       <title>Add Listing</title>
@@ -21,7 +71,7 @@ const AddListing = () => {
           </div>
 
           {/* Form Card */}
-          <form className="bg-white shadow-xl rounded-3xl p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-3xl p-8 space-y-6">
 
             {/* Two column row — Name & Category */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -32,6 +82,8 @@ const AddListing = () => {
                 <input
                   type="text"
                   name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="e.g. MacBook Air M1"
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                   required
@@ -44,6 +96,8 @@ const AddListing = () => {
                 </label>
                 <select
                   name="category"
+                  value={formData.category}
+                  onChange={handleChange}
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
                 >
                   <option value="Clothes & Fashion">Clothes & Fashion</option>
@@ -64,6 +118,8 @@ const AddListing = () => {
                 <input
                   type="number"
                   name="price"
+                  value={formData.price}
+                  onChange={handleChange}
                   placeholder="e.g. 5000"
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                   min="0"
@@ -77,6 +133,8 @@ const AddListing = () => {
                 <input
                   type="text"
                   name="location"
+                  value={formData.location}
+                  onChange={handleChange}
                   placeholder="e.g. Dhaka University"
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                   required
@@ -91,6 +149,8 @@ const AddListing = () => {
               </label>
               <textarea
                 name="description"
+                value={formData.description}
+                onChange={handleChange}
                 placeholder="Describe your item — condition, age, reason for selling..."
                 className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400 h-32 resize-none py-3"
                 required
@@ -105,6 +165,8 @@ const AddListing = () => {
               <input
                 type="text"
                 name="image"
+                value={formData.image}
+                onChange={handleChange}
                 placeholder="https://your-image-link.com/photo.jpg"
                 className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                 required
@@ -120,6 +182,8 @@ const AddListing = () => {
                 <input
                   type="date"
                   name="date"
+                  value={formData.date}
+                  onChange={handleChange}
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
                   required
                 />
@@ -132,9 +196,11 @@ const AddListing = () => {
                 <input
                   type="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="example@gmail.com"
-                  className="input input-bordered w-full rounded-xl bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
-                  readOnly
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
+                  required
                 />
               </div>
             </div>
