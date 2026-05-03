@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../Provider/AuthProvider'
 
 const MyCart = () => {
+  const { user, loading } = useContext(AuthContext)
+  const userEmail = user?.email
+
   const [cartItems, setCartItems] = useState([])
   const [showOrderForm, setShowOrderForm] = useState(false)
 
   const [orderInfo, setOrderInfo] = useState({
     name: '',
     mobile: '',
-    email: 'student@example.com',
+    email: '',
     location: '',
     extraNote: '',
     paymentMethod: 'Cash on Delivery',
@@ -16,58 +20,106 @@ const MyCart = () => {
   })
 
   useEffect(() => {
-    const dummyCart = [
-      {
-        id: 'P-001',
-        name: 'Cotton T-Shirt',
-        category: 'Clothing',
-        price: 500,
-        quantity: 2,
-      },
-      {
-        id: 'P-002',
-        name: 'Smartphone Pro',
-        category: 'Electronics',
-        price: 25000,
-        quantity: 1,
-      },
-      {
-        id: 'P-003',
-        name: 'Wireless Earphones',
-        category: 'Accessories',
-        price: 3000,
-        quantity: 3,
-      },
-    ]
+    if (userEmail) {
+      setOrderInfo((prev) => ({
+        ...prev,
+        email: userEmail,
+      }))
+    }
+  }, [userEmail])
 
-    setCartItems(dummyCart)
-  }, [])
+  useEffect(() => {
+    if (loading || !userEmail) return
 
-  const increaseQuantity = (id) => {
-    const updated = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    )
-    setCartItems(updated)
+    fetch(`http://localhost:3000/cart/${userEmail}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Cart data from backend:', data)
+        setCartItems(data)
+      })
+      .catch((error) => {
+        console.error('Error fetching cart:', error)
+      })
+  }, [loading, userEmail])
+
+  const increaseQuantity = (id, currentQuantity) => {
+    const newQuantity = currentQuantity + 1
+
+    fetch(`http://localhost:3000/cart/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Quantity increased:', data)
+
+        if (data.modifiedCount > 0) {
+          const updated = cartItems.map((item) =>
+            item._id === id ? { ...item, quantity: newQuantity } : item
+          )
+
+          setCartItems(updated)
+        }
+      })
+      .catch((error) => {
+        console.error('Error increasing quantity:', error)
+      })
   }
 
-  const decreaseQuantity = (id) => {
-    const updated = cartItems.map(item =>
-      item.id === id
-        ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
-        : item
-    )
-    setCartItems(updated)
+  const decreaseQuantity = (id, currentQuantity) => {
+    if (currentQuantity <= 1) return
+
+    const newQuantity = currentQuantity - 1
+
+    fetch(`http://localhost:3000/cart/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Quantity decreased:', data)
+
+        if (data.modifiedCount > 0) {
+          const updated = cartItems.map((item) =>
+            item._id === id ? { ...item, quantity: newQuantity } : item
+          )
+
+          setCartItems(updated)
+        }
+      })
+      .catch((error) => {
+        console.error('Error decreasing quantity:', error)
+      })
   }
 
   const removeItem = (id) => {
-    const updated = cartItems.filter(item => item.id !== id)
-    setCartItems(updated)
+    fetch(`http://localhost:3000/cart/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Deleted item:', data)
+
+        if (data.deletedCount > 0) {
+          const updated = cartItems.filter((item) => item._id !== id)
+          setCartItems(updated)
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting item:', error)
+      })
   }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
 
-    setOrderInfo(prev => ({
+    setOrderInfo((prev) => ({
       ...prev,
       [name]: value,
     }))
@@ -97,8 +149,49 @@ const MyCart = () => {
       }
     }
 
-    alert('Order placed successfully!')
-    setShowOrderForm(false)
+    const orderData = {
+      ...orderInfo,
+      email: userEmail,
+      items: cartItems,
+      totalPrice: totalPrice,
+    }
+
+    fetch('http://localhost:3000/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Order placed:', data)
+
+        if (data.insertedId) {
+          fetch(`http://localhost:3000/cart/clear/${userEmail}`, {
+            method: 'DELETE',
+          })
+            .then((res) => res.json())
+            .then((clearData) => {
+              console.log('Cart cleared:', clearData)
+
+              alert('Order placed successfully!')
+              setCartItems([])
+              setShowOrderForm(false)
+            })
+        }
+      })
+      .catch((error) => {
+        console.error('Error placing order:', error)
+      })
+  }
+
+  if (loading) {
+    return <p className="p-6">Loading...</p>
+  }
+
+  if (!user) {
+    return <p className="p-6">Please login to view your cart.</p>
   }
 
   return (
@@ -127,8 +220,8 @@ const MyCart = () => {
                 </thead>
 
                 <tbody>
-                  {cartItems.map(item => (
-                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                  {cartItems.map((item) => (
+                    <tr key={item._id} className="border-b hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium">{item.name}</td>
                       <td className="px-6 py-4">{item.category}</td>
 
@@ -139,7 +232,9 @@ const MyCart = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <button
-                            onClick={() => decreaseQuantity(item.id)}
+                            onClick={() =>
+                              decreaseQuantity(item._id, item.quantity)
+                            }
                             className="px-2 py-1 bg-gray-200 rounded"
                           >
                             -
@@ -148,14 +243,16 @@ const MyCart = () => {
                           <span>{item.quantity}</span>
 
                           <button
-                            onClick={() => increaseQuantity(item.id)}
+                            onClick={() =>
+                              increaseQuantity(item._id, item.quantity)
+                            }
                             className="px-2 py-1 bg-gray-200 rounded"
                           >
                             +
                           </button>
 
                           <button
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item._id)}
                             className="text-red-500 hover:text-red-700 ml-2"
                             title="Remove item"
                           >
@@ -279,7 +376,9 @@ const MyCart = () => {
                             type="radio"
                             name="paymentMethod"
                             value="Cash on Delivery"
-                            checked={orderInfo.paymentMethod === 'Cash on Delivery'}
+                            checked={
+                              orderInfo.paymentMethod === 'Cash on Delivery'
+                            }
                             onChange={handleInputChange}
                           />
                         </label>
@@ -290,7 +389,9 @@ const MyCart = () => {
                             type="radio"
                             name="paymentMethod"
                             value="Mobile Banking"
-                            checked={orderInfo.paymentMethod === 'Mobile Banking'}
+                            checked={
+                              orderInfo.paymentMethod === 'Mobile Banking'
+                            }
                             onChange={handleInputChange}
                           />
                         </label>
@@ -355,3 +456,5 @@ const MyCart = () => {
 }
 
 export default MyCart
+
+
