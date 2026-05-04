@@ -1,33 +1,103 @@
-import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import React, { useState, useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router'
+import UseAxios from '../hooks/UseAxios'
 import '../styles/ViewDetails.css'
 
 const ViewDetails = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const product = location.state?.product
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [orderData, setOrderData] = useState({
-    buyerName: '',
-    email: '',
-    phone: '',
-    quantity: 1,
-    pickupDate: '',
-    address: '',
-  })
+  const { id } = useParams()
+  const axiosInstance = UseAxios()
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [cartAdded, setCartAdded] = useState(false)
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setOrderData(prev => ({
-      ...prev,
-      [name]: value,
-    }))
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        let productData
+
+        if (id) {
+          const response = await axiosInstance.get(`/listing/${id}`)
+          productData = response.data
+        } else if (location.state?.product) {
+          productData = location.state.product
+        }
+
+        setProduct(productData)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching product:', err)
+        setError('Failed to load product details')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [id, location.state, axiosInstance])
+
+  const handleAddToCart = () => {
+    if (!product) return
+
+    const cartKey = 'campusbazar-cart'
+    const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]')
+    const itemId = product._id || product.id
+    const cartItem = {
+      id: itemId,
+      name: product.name,
+      category: product.category,
+      price: Number(product.price) || 0,
+      location: product.location || '',
+      image: product.image,
+      quantity: 1,
+      sellerEmail: product.email || product.sellerName || '',
+      listingDate: product.date || product.createdAt || '',
+    }
+
+    const existingIndex = existingCart.findIndex(item => item.id === itemId)
+    if (existingIndex >= 0) {
+      existingCart[existingIndex].quantity += 1
+    } else {
+      existingCart.push(cartItem)
+    }
+
+    localStorage.setItem(cartKey, JSON.stringify(existingCart))
+    setCartAdded(true)
+    alert(`${product.name} has been added to cart.`)
   }
 
-  const handleOrderSubmit = (e) => {
-    e.preventDefault()
-    setIsModalOpen(false)
-    alert('Your order request has been sent successfully!')
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown'
+    const dateObject = new Date(dateString)
+    if (Number.isNaN(dateObject.getTime())) return dateString
+    return dateObject.toLocaleDateString('en-US')
+  }
+
+  if (loading) {
+    return (
+      <div className='view-details-container'>
+        <div className='view-details-card'>
+          <div className='text-center py-8'>Loading product details...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className='view-details-container'>
+        <div className='view-details-card'>
+          <h2>Product not found</h2>
+          <p className='text-red-500'>{error}</p>
+          <button className='back-btn' onClick={() => navigate(-1)}>
+            Back
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!product) {
@@ -56,21 +126,22 @@ const ViewDetails = () => {
             <h1>{product.name}</h1>
             <p className='view-category'>Category: <span>{product.category}</span></p>
             <p className='view-description'>Description:</p>
-            <p className='view-description-text'>This is a detailed view of the selected product. You can customize this text later to show real product descriptions, available stock, or seller notes.</p>
-            <p className='view-detail'><strong>Brand:</strong> {product.brand}</p>
-            <p className='view-detail'><strong>Color:</strong> {product.color}</p>
-            <p className='view-detail'><strong>Provider Email:</strong> seller@example.com</p>
-            <p className='view-detail'><strong>Location:</strong> Siberia</p>
-            <p className='view-detail'><strong>Listed at:</strong> 2025-12-10</p>
+            <p className='view-description-text'>
+              {product.description || 'No description available for this product.'}
+            </p>
+            <p className='view-detail'><strong>Seller Name:</strong> {product.sellerName || 'Not provided'}</p>
+            <p className='view-detail'><strong>Provider Email:</strong> {product.email || 'Not provided'}</p>
+            <p className='view-detail'><strong>Location:</strong> {product.location || 'Not provided'}</p>
+            <p className='view-detail'><strong>Listed at:</strong> {formatDate(product.date || product.createdAt)}</p>
           </div>
 
           <div className='view-order-panel'>
             <div className='price-card'>
               <p className='price-label'>Price</p>
-              <p className='price-value'>Tk {product.price.toLocaleString('en-IN')}</p>
+              <p className='price-value'>Tk {Number(product.price).toLocaleString('en-IN')}</p>
             </div>
-            <button className='order-btn' onClick={() => setIsModalOpen(true)}>
-              Add to Cart
+            <button className='order-btn' onClick={handleAddToCart} disabled={cartAdded}>
+              {cartAdded ? 'Added to Cart' : 'Add to Cart'}
             </button>
             <button className='back-btn' onClick={() => navigate(-1)}>
               Back to Marketplace
@@ -78,133 +149,6 @@ const ViewDetails = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && (
-        <div className='modal-overlay'>
-          <div className='order-modal'>
-            <div className='modal-header'>
-              <div>
-                <h2>Confirm Your Order</h2>
-                <p>Review the details and submit your order request.</p>
-              </div>
-              <button className='modal-close' onClick={() => setIsModalOpen(false)}>
-                ×
-              </button>
-            </div>
-
-            <div className='modal-summary'>
-              <div>
-                <p><strong>Item:</strong> {product.name}</p>
-                <p><strong>Category:</strong> {product.category}</p>
-                <p><strong>Price:</strong> Tk {product.price.toLocaleString('en-IN')}</p>
-              </div>
-              <div>
-                <p><strong>Seller Location:</strong> Siberia</p>
-                <p><strong>Product ID:</strong> {product.id}</p>
-              </div>
-            </div>
-
-            <form className='order-form' onSubmit={handleOrderSubmit}>
-              <div className='order-form-row'>
-                <label>
-                  Buyer Name
-                  <input
-                    type='text'
-                    name='buyerName'
-                    value={orderData.buyerName}
-                    onChange={handleInputChange}
-                    placeholder='Enter your name'
-                    required
-                  />
-                </label>
-                <label>
-                  Email
-                  <input
-                    type='email'
-                    name='email'
-                    value={orderData.email}
-                    onChange={handleInputChange}
-                    placeholder='Enter your email'
-                    required
-                  />
-                </label>
-              </div>
-
-              <div className='order-form-row'>
-                <label>
-                  Product ID
-                  <input type='text' value={product.id} readOnly />
-                </label>
-                <label>
-                  Product Name
-                  <input type='text' value={product.name} readOnly />
-                </label>
-              </div>
-
-              <div className='order-form-row'>
-                <label>
-                  Phone Number
-                  <input
-                    type='tel'
-                    name='phone'
-                    value={orderData.phone}
-                    onChange={handleInputChange}
-                    placeholder='Enter your phone number'
-                    required
-                  />
-                </label>
-                <label>
-                  Quantity
-                  <input
-                    type='number'
-                    name='quantity'
-                    value={orderData.quantity}
-                    onChange={handleInputChange}
-                    min='1'
-                    required
-                  />
-                </label>
-              </div>
-
-              <div className='order-form-row'>
-                <label>
-                  Price
-                  <input type='text' value={product.price.toLocaleString('en-IN')} readOnly />
-                </label>
-                <label>
-                  Pickup Date
-                  <input
-                    type='date'
-                    name='pickupDate'
-                    value={orderData.pickupDate}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-              </div>
-
-              <label className='order-form-fullwidth'>
-                Address
-                <textarea
-                  name='address'
-                  value={orderData.address}
-                  onChange={handleInputChange}
-                  placeholder='Enter your pickup address'
-                  required
-                />
-              </label>
-
-              <div className='modal-actions'>
-                <button type='button' className='back-btn' onClick={() => setIsModalOpen(false)}>
-                  Cancel
-                </button>
-                <button type='submit' className='order-btn'>
-                  Submit Order
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
