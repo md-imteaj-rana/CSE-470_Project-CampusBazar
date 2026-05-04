@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 import '../styles/Marketplace.css'
 
 const Marketplace = () => {
@@ -8,6 +9,7 @@ const Marketplace = () => {
   const [visibleCount, setVisibleCount] = useState(20); // 5 rows x 4 columns
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const navigate = useNavigate();
 
   // Fetch listings from MongoDB
   useEffect(() => {
@@ -129,7 +131,15 @@ const Marketplace = () => {
                 <p className='product-description'>{product.description}</p>
                 <div className='product-footer'>
                   <p className='product-price'>Tk {(product.price || 0).toLocaleString('en-IN')}</p>
-                  <button className='add-to-cart-btn'>Add to Cart</button>
+                  <div style={{display: 'flex', gap: '8px'}}>
+                    <button 
+                      className='add-to-cart-btn' 
+                      style={{backgroundColor: '#4f46e5'}}
+                      onClick={() => navigate(`/ViewDetails/${product._id}`)}
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

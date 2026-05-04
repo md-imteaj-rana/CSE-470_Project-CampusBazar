@@ -53,12 +53,12 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal gap-2 text-base font-medium text-gray-700">
-              <li><a href="Maretplace" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
-              {user && <li><a href="AddListing" className="hover:text-indigo-600 transition-colors">Add listing</a></li>}
-              {user && <li><a href="MyProfile" className="hover:text-indigo-600 transition-colors">My Profile</a></li>}
-              {user && <li><a href="MyCart" className="hover:text-indigo-600 transition-colors">My Cart</a></li>}
-              {user && <li><a href="MyOrders" className="hover:text-indigo-600 transition-colors">My Orders</a></li>}
-              {user && isAdmin && <li><a href="AllUsers" className="hover:text-indigo-600 transition-colors">All Users</a></li>}
+              <li><a href="/Marketplace" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
+              {user && <li><a href="/AddListing" className="hover:text-indigo-600 transition-colors">Add listing</a></li>}
+              {user && <li><a href="/MyProfile" className="hover:text-indigo-600 transition-colors">My Profile</a></li>}
+              {user && <li><a href="/MyCart" className="hover:text-indigo-600 transition-colors">My Cart</a></li>}
+              {user && <li><a href="/MyOrders" className="hover:text-indigo-600 transition-colors">My Orders</a></li>}
+              {user && isAdmin && <li><a href="/AllUsers" className="hover:text-indigo-600 transition-colors">All Users</a></li>}
             </ul>
           </div>
 
@@ -92,7 +92,7 @@ const Navbar = () => {
             </button>
             }
             {
-              !user && <a href="Login" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
+              !user && <a href="/Login" className="btn btn-outline btn-sm border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white hidden md:flex">
               Login
             </a>
             }
@@ -120,13 +120,13 @@ const Navbar = () => {
         {isOpen && (
           <div className="lg:hidden bg-white border-t py-4 px-4 shadow-lg">
             <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
-              <li><a href="Maretplace" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
-              {user && <li><a href="AddListing" className="block py-2 hover:text-indigo-600">Add Listing</a></li>}
-              {user && <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>}
-              {user && <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>}
-              {user && <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>}
-              {user && <li><a href="MyListing" className="block py-2 hover:text-indigo-600">My Listing</a></li>}
-              {user && isAdmin && <li><a href="AllUsers" className="block py-2 hover:text-indigo-600">All Users</a></li>}
+              <li><a href="/Marketplace" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
+              {user && <li><a href="/AddListing" className="block py-2 hover:text-indigo-600">Add Listing</a></li>}
+              {user && <li><a href="/MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>}
+              {user && <li><a href="/MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>}
+              {user && <li><a href="/MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>}
+              {user && <li><a href="/MyListing" className="block py-2 hover:text-indigo-600">My Listing</a></li>}
+              {user && isAdmin && <li><a href="/AllUsers" className="block py-2 hover:text-indigo-600">All Users</a></li>}
               
               {
                 user && <li className="pt-4 border-t">
@@ -135,7 +135,7 @@ const Navbar = () => {
               }
               {
                 !user && <li className="pt-4 border-t">
-                <a href="Login" className="block py-2 text-indigo-600 font-semibold">Login</a>
+                <a href="/Login" className="block py-2 text-indigo-600 font-semibold">Login</a>
               </li>
               }
               

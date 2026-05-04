@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../Provider/AuthProvider'
 import { useLocation, useNavigate, useParams } from 'react-router'
 import UseAxios from '../hooks/UseAxios'
 import '../styles/ViewDetails.css'
@@ -8,6 +9,7 @@ const ViewDetails = () => {
   const location = useLocation()
   const { id } = useParams()
   const axiosInstance = UseAxios()
+  const { user } = useContext(AuthContext)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -39,14 +41,18 @@ const ViewDetails = () => {
     fetchProduct()
   }, [id, location.state, axiosInstance])
 
-  const handleAddToCart = () => {
-    if (!product) return
+  const handleAddToCart = async () => {
+    if (!product) return;
+    if (!user) {
+      alert("Please login to add items to your cart.");
+      navigate('/login');
+      return;
+    }
 
-    const cartKey = 'campusbazar-cart'
-    const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]')
-    const itemId = product._id || product.id
+    const itemId = product._id || product.id;
     const cartItem = {
-      id: itemId,
+      productId: itemId,
+      email: user.email,
       name: product.name,
       category: product.category,
       price: Number(product.price) || 0,
@@ -54,19 +60,28 @@ const ViewDetails = () => {
       image: product.image,
       quantity: 1,
       sellerEmail: product.email || product.sellerName || '',
-      listingDate: product.date || product.createdAt || '',
-    }
+    };
 
-    const existingIndex = existingCart.findIndex(item => item.id === itemId)
-    if (existingIndex >= 0) {
-      existingCart[existingIndex].quantity += 1
-    } else {
-      existingCart.push(cartItem)
-    }
+    try {
+      // First check if it already exists in the cart for this user
+      const response = await axiosInstance.get(`/cart/${user.email}`);
+      const existingCart = response.data;
+      const existingItem = existingCart.find(item => item.productId === itemId);
 
-    localStorage.setItem(cartKey, JSON.stringify(existingCart))
-    setCartAdded(true)
-    alert(`${product.name} has been added to cart.`)
+      if (existingItem) {
+        // Update quantity
+        await axiosInstance.patch(`/cart/${existingItem._id}`, { quantity: existingItem.quantity + 1 });
+      } else {
+        // Add new item
+        await axiosInstance.post('/cart', cartItem);
+      }
+
+      setCartAdded(true);
+      alert(`${product.name} has been added to cart.`);
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+      alert("Failed to add to cart.");
+    }
   }
 
   const formatDate = (dateString) => {

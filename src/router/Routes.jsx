@@ -42,7 +42,7 @@ const router = createBrowserRouter([
           element: <PrivateRoutes><MyCart></MyCart></PrivateRoutes>
         },
         {
-          path: "Maretplace",
+          path: "Marketplace",
           element: <Marketplace></Marketplace>
         },
         {
