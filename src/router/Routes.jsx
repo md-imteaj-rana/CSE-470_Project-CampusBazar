@@ -13,6 +13,8 @@ import Regisger from "../pages/Register";
 import AllUsers from "../pages/AllUsers";
 import PrivateRoutes from "./PrivateRoutes";
 import MyListing from "../components/MyListing";
+import DashboardLayout from "../pages/DashboardLayout";
+import MyWishlist from "../pages/MyWishlist";
 
 
 const router = createBrowserRouter([
@@ -26,32 +28,12 @@ const router = createBrowserRouter([
             element: <Home></Home>
         },
         {
-          path: "AddListing",
-          element: <PrivateRoutes><AddListing></AddListing></PrivateRoutes>
-        },
-        {
-          path: "MyOrders",
-          element: <PrivateRoutes><MyOrders></MyOrders></PrivateRoutes>
-        },
-        {
-          path: "MyProfile",
-          element: <PrivateRoutes><MyProfile></MyProfile></PrivateRoutes>
-        },
-        {
-          path: "MyCart",
-          element: <PrivateRoutes><MyCart></MyCart></PrivateRoutes>
-        },
-        {
           path: "Marketplace",
           element: <Marketplace></Marketplace>
         },
         {
           path: "ViewDetails/:id",
           element: <PrivateRoutes><ViewDetails></ViewDetails></PrivateRoutes>
-        },
-        {
-          path: "AllUsers",
-          element: <PrivateRoutes><AllUsers></AllUsers></PrivateRoutes>
         },
         {
           path: "Login",
@@ -62,8 +44,42 @@ const router = createBrowserRouter([
           element: <Regisger></Regisger>
         },
         {
-          path: "MyListing",
-          element: <PrivateRoutes><MyListing></MyListing></PrivateRoutes>
+          path: "dashboard",
+          element: <PrivateRoutes><DashboardLayout></DashboardLayout></PrivateRoutes>,
+          children: [
+            {
+              path: "",
+              element: <MyProfile></MyProfile>
+            },
+            {
+              path: "AddListing",
+              element: <AddListing></AddListing>
+            },
+            {
+              path: "MyOrders",
+              element: <MyOrders></MyOrders>
+            },
+            {
+              path: "MyProfile",
+              element: <MyProfile></MyProfile>
+            },
+            {
+              path: "MyCart",
+              element: <MyCart></MyCart>
+            },
+            {
+              path: "MyListing",
+              element: <MyListing></MyListing>
+            },
+            {
+              path: "MyWishlist",
+              element: <MyWishlist></MyWishlist>
+            },
+            {
+              path: "AllUsers",
+              element: <AllUsers></AllUsers>
+            }
+          ]
         }
         
     ]
