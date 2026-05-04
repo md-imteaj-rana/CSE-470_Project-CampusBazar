@@ -204,8 +204,6 @@ const Profile = () => {
 
       </div>
 
-
-      <MyListing></MyListing>
     </div>
   )
 }

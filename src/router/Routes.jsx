@@ -12,6 +12,7 @@ import Login from "../pages/Login";
 import Regisger from "../pages/Register";
 import AllUsers from "../pages/AllUsers";
 import PrivateRoutes from "./PrivateRoutes";
+import MyListing from "../components/MyListing";
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
         {
           path: "Register",
           element: <Regisger></Regisger>
+        },
+        {
+          path: "MyListing",
+          element: <PrivateRoutes><MyListing></MyListing></PrivateRoutes>
         }
         
     ]
