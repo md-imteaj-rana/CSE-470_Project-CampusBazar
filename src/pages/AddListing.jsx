@@ -1,66 +1,56 @@
-import React, { useContext, useState } from 'react'
-import { AuthContext } from '../Provider/AuthProvider'
-import axios from 'axios'
-import UseAxios from '../hooks/UseAxios'
+import React, { useState } from 'react'
 
 const AddListing = () => {
-  const { user } = useContext(AuthContext)
-  const axiosInstance = UseAxios()
-  const [uploading, setUploading] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'Clothes & Fashion',
+    price: '',
+    location: '',
+    description: '',
+    image: '',
+    date: '',
+    email: '' // This should be populated from auth
+  });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file))
-    }
-  }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const form = e.target
-    const file = form.image.files[0]
-
-    if (!file) {
-      alert('Please select an image for your listing.')
-      return
-    }
-
-    setUploading(true)
-
+    e.preventDefault();
     try {
-      // Upload image to imgbb
-      const res = await axios.post(
-        `https://api.imgbb.com/1/upload?&key=77a36fc81fc847f9b0040be511b7f0f0`,
-        { image: file },
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      )
-      const imageUrl = res.data.data.display_url
-
-      const listingData = {
-        name: form.name.value,
-        category: form.category.value,
-        price: form.price.value,
-        location: form.location.value,
-        description: form.description.value,
-        image: imageUrl,
-        date: form.date.value,
-        email: user?.email,
-        sellerName: user?.displayName,
+      const response = await fetch('http://localhost:3000/listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert('Listing added successfully!');
+        // Reset form or redirect
+        setFormData({
+          name: '',
+          category: 'Clothes & Fashion',
+          price: '',
+          location: '',
+          description: '',
+          image: '',
+          date: '',
+          email: ''
+        });
+      } else {
+        alert('Failed to add listing');
       }
-
-      await axiosInstance.post('/listings', listingData)
-      alert('Listing posted successfully!')
-      form.reset()
-      setPreviewUrl(null)
-    } catch (err) {
-      console.log(err)
-      alert('Failed to post listing. Please try again.')
-    } finally {
-      setUploading(false)
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error adding listing');
     }
-  }
-
+  };
   return (
     <div>
       <title>Add Listing</title>
@@ -81,7 +71,6 @@ const AddListing = () => {
           </div>
 
           {/* Form Card */}
-          <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-3xl p-8 space-y-6">
           <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-3xl p-8 space-y-6">
 
             {/* Two column row — Name & Category */}
@@ -168,22 +157,18 @@ const AddListing = () => {
               />
             </div>
 
-            {/* Product Image */}
+            {/* Image URL */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Product Image
+                Image URL
               </label>
-              {previewUrl && (
-                <div className="mb-3 rounded-xl overflow-hidden border border-gray-200 w-full max-h-48 flex items-center justify-center bg-gray-50">
-                  <img src={previewUrl} alt="Preview" className="max-h-48 object-contain" />
-                </div>
-              )}
               <input
-                type="file"
+                type="text"
                 name="image"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="file-input file-input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="https://your-image-link.com/photo.jpg"
+                className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                 required
               />
             </div>
@@ -211,7 +196,8 @@ const AddListing = () => {
                 <input
                   type="email"
                   name="email"
-                  defaultValue={user?.email}
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="example@gmail.com"
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
                   required
@@ -225,10 +211,9 @@ const AddListing = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={uploading}
-              className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold py-3 disabled:opacity-50"
+              className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold py-3"
             >
-              {uploading ? '⏳ Uploading...' : '🚀 Post Listing'}
+              🚀 Post Listing
             </button>
 
           </form>
