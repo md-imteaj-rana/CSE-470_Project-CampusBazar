@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import React, { useState, useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router'
+import UseAxios from '../hooks/UseAxios'
 import '../styles/ViewDetails.css'
 
 const ViewDetails = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const product = location.state?.product
+  const { id } = useParams()
+  const axiosInstance = UseAxios()
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [orderData, setOrderData] = useState({
     buyerName: '',
@@ -15,6 +20,34 @@ const ViewDetails = () => {
     pickupDate: '',
     address: '',
   })
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        let productData
+
+        if (id) {
+          // Fetch by ID from URL params
+          const response = await axiosInstance.get(`/listing/${id}`)
+          productData = response.data
+        } else if (location.state?.product) {
+          // Fallback to router state (for backward compatibility)
+          productData = location.state.product
+        }
+
+        setProduct(productData)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching product:', err)
+        setError('Failed to load product details')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [id, location.state, axiosInstance])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -28,6 +61,30 @@ const ViewDetails = () => {
     e.preventDefault()
     setIsModalOpen(false)
     alert('Your order request has been sent successfully!')
+  }
+
+  if (loading) {
+    return (
+      <div className='view-details-container'>
+        <div className='view-details-card'>
+          <div className='text-center py-8'>Loading product details...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className='view-details-container'>
+        <div className='view-details-card'>
+          <h2>Product not found</h2>
+          <p className='text-red-500'>{error}</p>
+          <button className='back-btn' onClick={() => navigate(-1)}>
+            Back
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!product) {
