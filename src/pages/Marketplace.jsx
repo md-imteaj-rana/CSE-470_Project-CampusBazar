@@ -49,6 +49,30 @@ const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  // Fetch listings from MongoDB
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/listings');
+        if (!response.ok) {
+          throw new Error('Failed to fetch listings');
+        }
+        const data = await response.json();
+        setAllProducts(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching listings:', err);
+        setError(err.message);
+        setAllProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
+
   // Get unique categories
   const categories = ['all', ...new Set(allProducts.map(p => p.category))];
 
@@ -56,8 +80,8 @@ const Marketplace = () => {
   const filteredProducts = useMemo(() => {
     return allProducts.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.color.toLowerCase().includes(searchTerm.toLowerCase());
+                          product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          product.location.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
@@ -83,7 +107,7 @@ const Marketplace = () => {
         <div className='search-box'>
           <input
             type='text'
-            placeholder='Search by product name, brand, or color...'
+            placeholder='Search by product name, description, or location...'
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -115,19 +139,34 @@ const Marketplace = () => {
         <p>Showing {visibleProducts.length} of {filteredProducts.length} products</p>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className='no-products'>
+          <p>Loading products from database...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className='no-products'>
+          <p>Error loading products: {error}</p>
+        </div>
+      )}
+
       {/* Products Grid */}
-      {visibleProducts.length > 0 ? (
+      {!loading && !error && visibleProducts.length > 0 ? (
         <div className='products-grid'>
-          {visibleProducts.map(product => (
-            <div key={product.id} className='product-card'>
+          {visibleProducts.map((product, index) => (
+            <div key={product._id || index} className='product-card'>
               <div className='product-image'>
-                <img src={product.image} alt={product.name} />
+                <img src={product.image || 'https://via.placeholder.com/300x300?text=No+Image'} alt={product.name} onError={(e) => {e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'}} />
                 <div className='product-badge'>New</div>
               </div>
               <div className='product-info'>
                 <h3 className='product-name'>{product.name}</h3>
-                <p className='product-brand'>Brand: <span>{product.brand}</span></p>
-                <p className='product-color'>Color: <span>{product.color}</span></p>
+                <p className='product-brand'>Location: <span>{product.location}</span></p>
+                <p className='product-color'>Seller: <span>{product.email}</span></p>
+                <p className='product-description'>{product.description}</p>
                 <div className='product-footer'>
                   <p className='product-price'>Tk {product.price.toLocaleString('en-IN')}</p>
                   <button
@@ -141,11 +180,12 @@ const Marketplace = () => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : !loading && !error && visibleProducts.length === 0 ? (
         <div className='no-products'>
           <p>No products found matching your criteria.</p>
         </div>
-      )}
+      ) : null
+      }
 
       {/* Show More Button */}
       {visibleCount < filteredProducts.length && (
