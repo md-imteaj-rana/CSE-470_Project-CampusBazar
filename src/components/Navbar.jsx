@@ -125,6 +125,7 @@ const Navbar = () => {
               {user && <li><a href="MyProfile" className="block py-2 hover:text-indigo-600">My Profile</a></li>}
               {user && <li><a href="MyCart" className="block py-2 hover:text-indigo-600">My Cart</a></li>}
               {user && <li><a href="MyOrders" className="block py-2 hover:text-indigo-600">My Orders</a></li>}
+              {user && <li><a href="MyListing" className="block py-2 hover:text-indigo-600">My Listing</a></li>}
               {user && isAdmin && <li><a href="AllUsers" className="block py-2 hover:text-indigo-600">All Users</a></li>}
               
               {
