@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
+const CART_STORAGE_KEY = 'campusbazar-cart'
+
 const MyCart = () => {
   const [cartItems, setCartItems] = useState([])
   const [showOrderForm, setShowOrderForm] = useState(false)
@@ -16,32 +18,20 @@ const MyCart = () => {
   })
 
   useEffect(() => {
-    const dummyCart = [
-      {
-        id: 'P-001',
-        name: 'Cotton T-Shirt',
-        category: 'Clothing',
-        price: 500,
-        quantity: 2,
-      },
-      {
-        id: 'P-002',
-        name: 'Smartphone Pro',
-        category: 'Electronics',
-        price: 25000,
-        quantity: 1,
-      },
-      {
-        id: 'P-003',
-        name: 'Wireless Earphones',
-        category: 'Accessories',
-        price: 3000,
-        quantity: 3,
-      },
-    ]
-
-    setCartItems(dummyCart)
+    const storedCart = localStorage.getItem(CART_STORAGE_KEY)
+    if (storedCart) {
+      try {
+        setCartItems(JSON.parse(storedCart))
+      } catch (err) {
+        console.error('Unable to parse cart data:', err)
+        setCartItems([])
+      }
+    }
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems))
+  }, [cartItems])
 
   const increaseQuantity = (id) => {
     const updated = cartItems.map(item =>
@@ -261,84 +251,67 @@ const MyCart = () => {
                         name="extraNote"
                         value={orderInfo.extraNote}
                         onChange={handleInputChange}
-                        placeholder="Example: Call before delivery, meet near campus gate, etc."
+                        placeholder="Add any notes for the delivery"
                         className="w-full border p-3 rounded-lg mt-1"
                         rows="2"
                       />
                     </label>
 
-                    <div>
-                      <p className="font-semibold text-gray-800 mb-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <label>
                         Payment Method
-                      </p>
+                        <select
+                          name="paymentMethod"
+                          value={orderInfo.paymentMethod}
+                          onChange={handleInputChange}
+                          className="w-full border p-3 rounded-lg mt-1"
+                        >
+                          <option>Cash on Delivery</option>
+                          <option>Mobile Banking</option>
+                        </select>
+                      </label>
 
-                      <div className="space-y-3">
-                        <label className="flex items-center justify-between border rounded-xl p-4 cursor-pointer">
-                          <span>💵 Cash on Delivery</span>
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="Cash on Delivery"
-                            checked={orderInfo.paymentMethod === 'Cash on Delivery'}
-                            onChange={handleInputChange}
-                          />
-                        </label>
-
-                        <label className="flex items-center justify-between border rounded-xl p-4 cursor-pointer">
-                          <span>📱 Mobile Banking</span>
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="Mobile Banking"
-                            checked={orderInfo.paymentMethod === 'Mobile Banking'}
-                            onChange={handleInputChange}
-                          />
-                        </label>
-                      </div>
+                      {orderInfo.paymentMethod === 'Mobile Banking' && (
+                        <>
+                          <label>
+                            Payment Number
+                            <input
+                              type="text"
+                              name="paymentNumber"
+                              value={orderInfo.paymentNumber}
+                              onChange={handleInputChange}
+                              className="w-full border p-3 rounded-lg mt-1"
+                              placeholder="Mobile number"
+                              required
+                            />
+                          </label>
+                          <label>
+                            Transaction ID
+                            <input
+                              type="text"
+                              name="transactionId"
+                              value={orderInfo.transactionId}
+                              onChange={handleInputChange}
+                              className="w-full border p-3 rounded-lg mt-1"
+                              placeholder="Transaction ID"
+                              required
+                            />
+                          </label>
+                        </>
+                      )}
                     </div>
 
-                    {orderInfo.paymentMethod === 'Mobile Banking' && (
-                      <div className="border rounded-xl p-4 bg-gray-50">
-                        <p className="font-semibold mb-2">
-                          Payment Instructions
-                        </p>
-
-                        <p className="text-sm text-gray-700 mb-4">
-                          After making payment via bKash/Nagad/Rocket, enter your
-                          payment mobile number and transaction ID. The seller will
-                          verify your payment.
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <input
-                            type="text"
-                            name="paymentNumber"
-                            value={orderInfo.paymentNumber}
-                            onChange={handleInputChange}
-                            placeholder="Payment Mobile Number"
-                            className="w-full border p-3 rounded-lg"
-                          />
-
-                          <input
-                            type="text"
-                            name="transactionId"
-                            value={orderInfo.transactionId}
-                            onChange={handleInputChange}
-                            placeholder="Transaction ID"
-                            className="w-full border p-3 rounded-lg"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between items-center border-t pt-4">
-                      <h4 className="text-xl font-bold text-gray-800">
-                        Total: Tk {totalPrice.toLocaleString('en-IN')}
-                      </h4>
-
+                    <div className="flex justify-end gap-4 pt-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowOrderForm(false)}
+                        className="px-5 py-3 rounded-xl border border-gray-300 text-gray-700"
+                      >
+                        Cancel
+                      </button>
                       <button
                         type="submit"
-                        className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700"
+                        className="px-5 py-3 rounded-xl bg-purple-600 text-white hover:bg-purple-700"
                       >
                         Place Order
                       </button>

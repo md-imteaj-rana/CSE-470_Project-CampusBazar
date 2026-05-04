@@ -181,7 +181,7 @@ const AddListing = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Listing Date
+                  Listing Date (mm/dd/yyyy)
                 </label>
                 <input
                   type="date"

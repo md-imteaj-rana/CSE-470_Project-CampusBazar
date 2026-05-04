@@ -33,8 +33,15 @@ const Marketplace = () => {
     fetchProducts()
   }, [axiosInstance])
 
-  // Get unique categories
-  const categories = ['all', ...new Set(allProducts.map(p => p.category))];
+  // Fixed category filter options
+  const categories = [
+    'all',
+    'Clothes & Fashion',
+    'Electronics',
+    'Accessories',
+    'Care Products',
+    'Automobile'
+  ];
 
   // Filter products based on search and category
   const filteredProducts = useMemo(() => {
