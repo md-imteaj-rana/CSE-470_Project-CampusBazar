@@ -53,6 +53,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal gap-2 text-base font-medium text-gray-700">
+              <li><a href="/" className="hover:text-indigo-600 transition-colors">Home</a></li>
               <li><a href="/Marketplace" className="hover:text-indigo-600 transition-colors">Marketplace</a></li>
               {user && <li><a href="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</a></li>}
             </ul>
@@ -116,6 +117,7 @@ const Navbar = () => {
         {isOpen && (
           <div className="lg:hidden bg-white border-t py-4 px-4 shadow-lg">
             <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
+              <li><a href="/" className="block py-2 hover:text-indigo-600">Home</a></li>
               <li><a href="/Marketplace" className="block py-2 hover:text-indigo-600">Marketplace</a></li>
               {user && <li><a href="/dashboard" className="block py-2 hover:text-indigo-600">Dashboard</a></li>}
               
