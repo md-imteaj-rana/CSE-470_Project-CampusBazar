@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 
 const AddListing = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,10 @@ const AddListing = () => {
     email: '' // This should be populated from auth
   });
 
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -20,19 +25,60 @@ const AddListing = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!imageFile) {
+      alert('Please select an image for your listing.');
+      return;
+    }
+
     try {
+      setUploading(true);
+
+      // imgbb api work
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?&key=77a36fc81fc847f9b0040be511b7f0f0`,
+        { image: imageFile },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (!res.data.success) {
+        alert('Image upload failed. Please try again.');
+        setUploading(false);
+        return;
+      }
+
+      const mainImageUrl = res.data.data.display_url;
+
+      const listingData = {
+        ...formData,
+        image: mainImageUrl
+      };
+
       const response = await fetch('http://localhost:3000/listings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(listingData),
       });
+
       if (response.ok) {
         alert('Listing added successfully!');
-        // Reset form or redirect
+        // Reset form
         setFormData({
           name: '',
           category: 'Clothes & Fashion',
@@ -43,14 +89,19 @@ const AddListing = () => {
           date: '',
           email: ''
         });
+        setImageFile(null);
+        setImagePreview(null);
       } else {
         alert('Failed to add listing');
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Error adding listing');
+    } finally {
+      setUploading(false);
     }
   };
+
   return (
     <div>
       <title>Add Listing</title>
@@ -157,20 +208,27 @@ const AddListing = () => {
               />
             </div>
 
-            {/* Image URL */}
+            {/* Product Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Image URL
+                Product Image
               </label>
               <input
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://your-image-link.com/photo.jpg"
-                className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800 placeholder:text-gray-400"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="file-input file-input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
                 required
               />
+              {imagePreview && (
+                <div className="mt-3">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover rounded-xl border border-gray-200"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Two column row — Date & Email */}
@@ -211,9 +269,10 @@ const AddListing = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold py-3"
+              disabled={uploading}
+              className="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl border-none shadow-md transition-all duration-200 text-base font-semibold py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              🚀 Post Listing
+              {uploading ? '⏳ Uploading & Posting...' : '🚀 Post Listing'}
             </button>
 
           </form>
