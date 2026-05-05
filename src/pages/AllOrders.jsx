@@ -9,7 +9,7 @@ const AllOrders = () => {
   useEffect(() => {
     if (loading || !user) return;
 
-    fetch('http://localhost:3000/all-orders')
+    fetch('https://campusbazar-cse470.vercel.app/all-orders')
       .then((res) => res.json())
       .then((data) => {
         setOrders(data);
@@ -22,7 +22,7 @@ const AllOrders = () => {
   }, [loading, user]);
 
   const handleStatusChange = (orderId, newStatus) => {
-    fetch(`http://localhost:3000/orders/${orderId}/status`, {
+    fetch(`https://campusbazar-cse470.vercel.app/orders/${orderId}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const AllOrders = () => {
     const isConfirmed = window.confirm('Are you sure you want to delete this order? This action cannot be undone.');
     if (!isConfirmed) return;
 
-    fetch(`http://localhost:3000/orders/${orderId}`, {
+    fetch(`https://campusbazar-cse470.vercel.app/orders/${orderId}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())

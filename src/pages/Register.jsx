@@ -73,7 +73,7 @@ const Regisger = () => {
           setUser(userCredential.user)
 
           // sending user info to database
-          axios.post('http://localhost:3000/users',formData)
+          axios.post('https://campusbazar-cse470.vercel.app/users',formData)
           .then(res => {
             console.log(res.data)
           })

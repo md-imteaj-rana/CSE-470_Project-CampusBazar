@@ -18,7 +18,7 @@ const MyOrders = () => {
   useEffect(() => {
     if (loading || !userEmail) return
 
-    fetch(`http://localhost:3000/orders/${userEmail}`)
+    fetch(`https://campusbazar-cse470.vercel.app/orders/${userEmail}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Orders from backend:', data)
@@ -72,7 +72,7 @@ const MyOrders = () => {
       review: reviewInfo.review,
     }
 
-    fetch('http://localhost:3000/reviews', {
+    fetch('https://campusbazar-cse470.vercel.app/reviews', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

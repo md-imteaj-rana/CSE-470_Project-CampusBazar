@@ -69,7 +69,7 @@ const AddListing = () => {
         image: mainImageUrl
       };
 
-      const response = await fetch('http://localhost:3000/listings', {
+      const response = await fetch('https://campusbazar-cse470.vercel.app/listings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

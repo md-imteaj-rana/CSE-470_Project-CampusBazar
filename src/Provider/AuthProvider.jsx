@@ -33,7 +33,7 @@ const AuthProvider = ({children}) => {
   // getting role of the user
   useEffect(() => {
     if(!user) return;
-    axios.get(`http://localhost:3000/users/role/${user.email}`)
+    axios.get(`https://campusbazar-cse470.vercel.app/users/role/${user.email}`)
     .then(res => {
       setRole(res.data.role)
     })

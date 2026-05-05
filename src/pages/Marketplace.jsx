@@ -16,7 +16,7 @@ const Marketplace = () => {
     const fetchListings = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/listings');
+        const response = await fetch('https://campusbazar-cse470.vercel.app/listings');
         if (!response.ok) {
           throw new Error('Failed to fetch listings');
         }

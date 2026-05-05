@@ -50,7 +50,7 @@ const ViewDetails = () => {
 
     if (!productId) return
 
-    fetch(`http://localhost:3000/reviews/product/${productId}`)
+    fetch(`https://campusbazar-cse470.vercel.app/reviews/product/${productId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Reviews from backend:', data)

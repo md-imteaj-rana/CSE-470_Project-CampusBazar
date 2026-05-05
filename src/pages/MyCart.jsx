@@ -31,7 +31,7 @@ const MyCart = () => {
   useEffect(() => {
     if (loading || !userEmail) return
 
-    fetch(`http://localhost:3000/cart/${userEmail}`)
+    fetch(`https://campusbazar-cse470.vercel.app/cart/${userEmail}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Cart data from backend:', data)
@@ -45,7 +45,7 @@ const MyCart = () => {
   const increaseQuantity = (id, currentQuantity) => {
     const newQuantity = currentQuantity + 1
 
-    fetch(`http://localhost:3000/cart/${id}`, {
+    fetch(`https://campusbazar-cse470.vercel.app/cart/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const MyCart = () => {
 
     const newQuantity = currentQuantity - 1
 
-    fetch(`http://localhost:3000/cart/${id}`, {
+    fetch(`https://campusbazar-cse470.vercel.app/cart/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const MyCart = () => {
   }
 
   const removeItem = (id) => {
-    fetch(`http://localhost:3000/cart/${id}`, {
+    fetch(`https://campusbazar-cse470.vercel.app/cart/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -156,7 +156,7 @@ const MyCart = () => {
       totalPrice: totalPrice,
     }
 
-    fetch('http://localhost:3000/orders', {
+    fetch('https://campusbazar-cse470.vercel.app/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const MyCart = () => {
         console.log('Order placed:', data)
 
         if (data.insertedId) {
-          fetch(`http://localhost:3000/cart/clear/${userEmail}`, {
+          fetch(`https://campusbazar-cse470.vercel.app/cart/clear/${userEmail}`, {
             method: 'DELETE',
           })
             .then((res) => res.json())

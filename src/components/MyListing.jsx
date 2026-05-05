@@ -14,7 +14,7 @@ const MyListing = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/listings/${user.email}`);
+        const response = await fetch(`https://campusbazar-cse470.vercel.app/listings/${user.email}`);
         if (!response.ok) {
           throw new Error('Failed to fetch your listings');
         }
