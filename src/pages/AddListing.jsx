@@ -5,6 +5,7 @@ const AddListing = () => {
   const [formData, setFormData] = useState({
     name: '',
     category: 'Clothes & Fashion',
+    productType: 'New',
     price: '',
     location: '',
     description: '',
@@ -82,6 +83,7 @@ const AddListing = () => {
         setFormData({
           name: '',
           category: 'Clothes & Fashion',
+          productType: 'New',
           price: '',
           location: '',
           description: '',
@@ -124,8 +126,8 @@ const AddListing = () => {
           {/* Form Card */}
           <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-3xl p-8 space-y-6">
 
-            {/* Two column row — Name & Category */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Three column row — Name, Category & Product Type */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Product Name
@@ -156,6 +158,21 @@ const AddListing = () => {
                   <option value="Accessories">Accessories</option>
                   <option value="Care Products">Care Products</option>
                   <option value="Automobile">Automobile</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Product Type
+                </label>
+                <select
+                  name="productType"
+                  value={formData.productType}
+                  onChange={handleChange}
+                  className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
+                >
+                  <option value="New">New</option>
+                  <option value="Old">Old</option>
                 </select>
               </div>
             </div>
