@@ -87,6 +87,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-12">
+      <title>My Profile</title>
       <div className="w-full max-w-2xl space-y-6">
 
         {/* Header Badge */}
