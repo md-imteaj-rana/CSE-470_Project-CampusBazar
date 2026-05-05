@@ -28,11 +28,12 @@ const DashboardLayout = () => {
     { name: 'My Listing', path: '/dashboard/MyListing', icon: '📦' },
     { name: 'My Wishlist', path: '/dashboard/MyWishlist', icon: '❤️' },
     { name: 'My Cart', path: '/dashboard/MyCart', icon: '🛒' },
-    { name: 'My Orders', path: '/dashboard/MyOrders', icon: '📋' },
+    { name: 'My Orders', path: '/dashboard/MyOrders', icon: '📋' }
   ];
 
   if (isAdmin) {
     menuItems.push({ name: 'All Users', path: '/dashboard/AllUsers', icon: '👥' });
+    menuItems.push({ name: 'All Orders', path: '/dashboard/AllOrders', icon: '📋' });
   }
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);

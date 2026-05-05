@@ -15,6 +15,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import MyListing from "../components/MyListing";
 import DashboardLayout from "../pages/DashboardLayout";
 import MyWishlist from "../pages/MyWishlist";
+import AllOrders from "../pages/AllOrders";
 
 
 const router = createBrowserRouter([
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
             {
               path: "AllUsers",
               element: <AllUsers></AllUsers>
+            },
+            {
+              path: "AllOrders",
+              element: <PrivateRoutes><AllOrders></AllOrders></PrivateRoutes>
             }
           ]
         }

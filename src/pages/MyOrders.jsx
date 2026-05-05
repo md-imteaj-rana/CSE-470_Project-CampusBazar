@@ -52,8 +52,15 @@ const MyOrders = () => {
                     <h3 className="text-xl font-bold">
                       Order ID: {order._id}
                     </h3>
-                    <p className="text-sm">
-                      Status: {order.status || 'pending'}
+                    <p className="text-sm flex items-center gap-2 mt-1">
+                      Status:
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                        (order.status || 'placed') === 'placed' ? 'bg-yellow-400 text-yellow-900' :
+                        order.status === 'shipped' ? 'bg-blue-400 text-blue-900' :
+                        'bg-green-400 text-green-900'
+                      }`}>
+                        {order.status || 'placed'}
+                      </span>
                     </p>
                   </div>
 

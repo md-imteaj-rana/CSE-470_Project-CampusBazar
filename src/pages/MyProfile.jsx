@@ -12,7 +12,18 @@ const Profile = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState(null)
+  const [userRole, setUserRole] = useState(null)
   const axiosInstance = UseAxios()
+
+  React.useEffect(() => {
+    if (user?.email) {
+      axiosInstance.get(`/users/role/${user.email}`)
+        .then(res => {
+          setUserRole(res.data?.role)
+        })
+        .catch(err => console.error("Failed to fetch role", err))
+    }
+  }, [user, axiosInstance])
 
   const handleUpdateform = () => {
     setIsOpen(!isOpen)
@@ -127,10 +138,12 @@ const Profile = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-gray-50 rounded-2xl px-5 py-3.5">
-                <span className="text-xl">✅</span>
+                <span className="text-xl">{userRole === 'admin' ? '👑' : '✅'}</span>
                 <div>
                   <p className="text-xs text-gray-400">Account Status</p>
-                  <p className="text-sm font-semibold text-green-600">Verified Student</p>
+                  <p className="text-sm font-semibold text-green-600 capitalize">
+                    {userRole ? userRole : 'Loading...'}
+                  </p>
                 </div>
               </div>
             </div>
