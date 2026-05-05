@@ -122,7 +122,6 @@ const Marketplace = () => {
             <div key={product._id || index} className='product-card'>
               <div className='product-image'>
                 <img src={product.image || 'https://via.placeholder.com/300x300?text=No+Image'} alt={product.name} onError={(e) => {e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'}} />
-                <div className='product-badge'>New</div>
               </div>
               <div className='product-info'>
                 <h3 className='product-name'>{product.name}</h3>
