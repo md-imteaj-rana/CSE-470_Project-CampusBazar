@@ -79,7 +79,12 @@ const MyOrders = () => {
       },
       body: JSON.stringify(reviewData),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Review submit failed with status ${res.status}`)
+        }
+        return res.json()
+      })
       .then((data) => {
         console.log('Review submitted:', data)
 
@@ -96,6 +101,7 @@ const MyOrders = () => {
       })
       .catch((error) => {
         console.error('Error submitting review:', error)
+        alert('Failed to submit review. Please check backend and console.')
       })
   }
 
@@ -122,7 +128,8 @@ const MyOrders = () => {
           <div className="space-y-6">
             {orders.map((order) => {
               const orderStatus = order.status || 'placed'
-              const isShipped = orderStatus.toLowerCase() === 'shipped'
+              const statusLower = orderStatus.toLowerCase()
+              const isDelivered = statusLower === 'delivered'
 
               return (
                 <div
@@ -139,11 +146,13 @@ const MyOrders = () => {
                         Status:
                         <span
                           className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
-                            orderStatus.toLowerCase() === 'placed'
+                            statusLower === 'placed'
                               ? 'bg-yellow-400 text-yellow-900'
-                              : orderStatus.toLowerCase() === 'shipped'
+                              : statusLower === 'shipped'
                               ? 'bg-blue-400 text-blue-900'
-                              : 'bg-green-400 text-green-900'
+                              : statusLower === 'delivered'
+                              ? 'bg-green-400 text-green-900'
+                              : 'bg-gray-400 text-gray-900'
                           }`}
                         >
                           {orderStatus}
@@ -226,7 +235,7 @@ const MyOrders = () => {
                             </td>
 
                             <td className="px-6 py-4">
-                              {isShipped ? (
+                              {isDelivered ? (
                                 <button
                                   onClick={() => handleOpenReviewForm(order, item)}
                                   className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
@@ -235,7 +244,7 @@ const MyOrders = () => {
                                 </button>
                               ) : (
                                 <span className="text-gray-500 text-sm">
-                                  Available after shipping
+                                  Available after delivery
                                 </span>
                               )}
                             </td>

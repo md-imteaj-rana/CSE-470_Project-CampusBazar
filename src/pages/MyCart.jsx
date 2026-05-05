@@ -409,6 +409,12 @@ const MyCart = () => {
                           payment mobile number and transaction ID. The seller will
                           verify your payment.
                         </p>
+                        <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                        <p className="text-sm text-gray-600 mb-1">Send payment to:</p>
+                        <p className="text-lg font-bold text-purple-700">
+                          bKash / Nagad / Rocket: 01812345678
+                        </p>
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <input
