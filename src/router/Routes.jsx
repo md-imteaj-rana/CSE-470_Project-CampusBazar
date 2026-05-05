@@ -16,6 +16,8 @@ import MyListing from "../components/MyListing";
 import DashboardLayout from "../pages/DashboardLayout";
 import MyWishlist from "../pages/MyWishlist";
 import AllOrders from "../pages/AllOrders";
+import AllProducts from "../pages/AllProducts";
+import AdminRoutes from "./AdminRoutes";
 
 
 const router = createBrowserRouter([
@@ -78,11 +80,15 @@ const router = createBrowserRouter([
             },
             {
               path: "AllUsers",
-              element: <AllUsers></AllUsers>
+              element: <AdminRoutes><AllUsers></AllUsers></AdminRoutes>
             },
             {
               path: "AllOrders",
-              element: <PrivateRoutes><AllOrders></AllOrders></PrivateRoutes>
+              element: <AdminRoutes><AllOrders></AllOrders></AdminRoutes>
+            },
+            {
+              path: "AllProducts",
+              element: <AdminRoutes><AllProducts></AllProducts></AdminRoutes>
             }
           ]
         }
