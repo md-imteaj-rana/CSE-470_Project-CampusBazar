@@ -14,6 +14,7 @@ const ViewDetails = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [cartAdded, setCartAdded] = useState(false)
+  const [wishlistAdded, setWishlistAdded] = useState(false)
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -81,6 +82,42 @@ const ViewDetails = () => {
     } catch (err) {
       console.error('Error adding to cart:', err);
       alert("Failed to add to cart.");
+    }
+  }
+
+  const handleAddToWishlist = async () => {
+    if (!product) return;
+    if (!user) {
+      alert('Please login to add items to your wishlist.');
+      navigate('/login');
+      return;
+    }
+
+    const itemId = product._id || product.id;
+    const wishlistItem = {
+      productId: itemId,
+      email: user.email,
+      name: product.name,
+      category: product.category,
+      price: Number(product.price) || 0,
+      location: product.location || '',
+      image: product.image,
+      quantity: 1,
+      sellerEmail: product.email || product.sellerName || '',
+    };
+
+    try {
+      const response = await axiosInstance.post('/wishlist', wishlistItem);
+      if (response.data.duplicate) {
+        alert('This item is already in your wishlist.');
+      } else {
+        setWishlistAdded(true);
+        alert(`${product.name} has been added to your wishlist.`);
+      }
+      navigate('/dashboard/MyWishlist');
+    } catch (err) {
+      console.error('Error adding to wishlist:', err);
+      alert('Failed to add to wishlist.');
     }
   }
 
@@ -157,6 +194,9 @@ const ViewDetails = () => {
             </div>
             <button className='order-btn' onClick={handleAddToCart} disabled={cartAdded}>
               {cartAdded ? 'Added to Cart' : 'Add to Cart'}
+            </button>
+            <button className='order-btn wishlist-btn' onClick={handleAddToWishlist} disabled={wishlistAdded}>
+              {wishlistAdded ? 'Added to Wishlist' : 'Add to Wishlist'}
             </button>
             <button className='back-btn' onClick={() => navigate(-1)}>
               Back to Marketplace
