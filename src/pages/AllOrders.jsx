@@ -131,7 +131,7 @@ const AllOrders = () => {
                         <select
                           value={order.status || 'placed'}
                           onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                          className="bg-white text-indigo-900 text-sm font-bold rounded-lg px-4 py-2 border-0 outline-none focus:ring-2 focus:ring-indigo-300 shadow-sm cursor-pointer h-[38px]"
+                          className="bg-white text-indigo-900 text-sm font-bold rounded-lg px-4 py-2 border-0 outline-none focus:ring-2 focus:ring-indigo-300 shadow-sm cursor-pointer h-9.5"
                         >
                           <option value="placed">Placed</option>
                           <option value="shipped">Shipped</option>
@@ -139,7 +139,7 @@ const AllOrders = () => {
                         </select>
                         <button
                           onClick={() => handleDeleteOrder(order._id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition-colors shadow-sm h-[38px] flex items-center justify-center"
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition-colors shadow-sm h-9.5 flex items-center justify-center"
                           title="Delete Order"
                         >
                           🗑️
