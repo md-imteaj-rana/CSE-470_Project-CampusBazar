@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookOpen, Laptop, Bike, Sofa, Shirt, MoreHorizontal } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 const categories = [
   { name: 'Books & Notes', icon: BookOpen, color: 'bg-blue-100 text-blue-600' },

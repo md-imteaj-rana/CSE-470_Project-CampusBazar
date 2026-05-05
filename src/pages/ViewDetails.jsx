@@ -177,6 +177,7 @@ const ViewDetails = () => {
           <div className='view-info-panel'>
             <h1>{product.name}</h1>
             <p className='view-category'>Category: <span>{product.category}</span></p>
+            <p className='view-detail'><strong>Condition:</strong> {product.productCondition || product.productType || 'Not specified'}</p>
             <p className='view-description'>Description:</p>
             <p className='view-description-text'>
               {product.description || 'No description available for this product.'}

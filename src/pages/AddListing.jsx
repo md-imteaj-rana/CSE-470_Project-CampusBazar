@@ -163,16 +163,16 @@ const AddListing = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Product Type
+                  Product Condition
                 </label>
                 <select
-                  name="productType"
-                  value={formData.productType}
+                  name="productCondition"
+                  value={formData.productCondition}
                   onChange={handleChange}
                   className="input input-bordered w-full rounded-xl bg-gray-50 border-gray-200 focus:border-indigo-500 text-gray-800"
                 >
                   <option value="New">New</option>
-                  <option value="Old">Old</option>
+                  <option value="Used">Used</option>
                 </select>
               </div>
             </div>

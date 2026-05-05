@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../Provider/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const MyListing = () => {
   const { user } = useContext(AuthContext);
@@ -101,8 +102,8 @@ const MyListing = () => {
                     {product.description}
                   </p>
                   
-                  {/* Price & Action */}
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                  {/* Price & Date */}
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 mb-4">
                     <span className="text-lg font-bold text-indigo-600">
                       Tk {(Number(product.price) || 0).toLocaleString('en-IN')}
                     </span>
@@ -110,6 +111,15 @@ const MyListing = () => {
                       {product.date || new Date(product.createdAt).toLocaleDateString()}
                     </span>
                   </div>
+                  
+                  {/* View Details Button */}
+                  <Link 
+                    to={`/ViewDetails/${product._id}`} 
+                    state={{ product }}
+                    className="w-full text-center py-2 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white font-semibold rounded-xl transition-colors duration-300"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </div>
             ))}
